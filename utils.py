@@ -14,7 +14,8 @@ def get_overlaps(array1, array2):
     return overlaps
 
 
-def write_stats(tool, filename_m, filename_t, tRNArray_len, mRNArray_len, overlaps, result_path):
+def write_stats(tool, filename_m, filename_t, tRNArray_len, mRNArray_len, overlaps, result_path,
+                mRNAlen, tRNAlen):
     with open(result_path, 'a') as file:
         file.write('#\t{}\t{}\t{}\n'
                    'mRNA total:\t{}\n'
@@ -22,13 +23,36 @@ def write_stats(tool, filename_m, filename_t, tRNArray_len, mRNArray_len, overla
                    'mRNA/tRNA proportions:\t{:.3f}\n'
                    'Overlaps total:\t{}\n'
                    'Overlaps percentile tRNA:\t{:.3f}%\n'
-                   'Overlaps percentile mRNA:\t{:.3f}%\n'.format(
+                   'Overlaps percentile mRNA:\t{:.3f}%\n'
+
+                   'Filelength Proportion(mRNA/tRNA):\t{}\n'
+                   'Filelength Proportion(tRNA/mRNA):\t{}\n'
+                   'mRNA filelength:\t{}\n'
+                   'tRNA filelength:\t{}\n'
+                   'mRNA/tRNA normalized proportions:\t{:.3f}\n'
+
+                   'Overlaps normalized percentile tRNA:\t{:.3f}%\n'
+                   'Overlaps normalized percentile mRNA:\t{:.3f}%\n'
+
+            .format(
             tool, filename_m, filename_t,
-            mRNArray_len, tRNArray_len,
+
+            mRNArray_len,
+            tRNArray_len,
             round(mRNArray_len / float(tRNArray_len), 3),
             len(overlaps),
             round(len(overlaps) / float(tRNArray_len), 3),
-            round(len(overlaps) / float(mRNArray_len), 3)))
+            round(len(overlaps) / float(mRNArray_len), 3),
+
+            round(mRNAlen / tRNAlen, 3),
+            round(tRNAlen / mRNAlen, 3),
+            mRNAlen,
+            tRNAlen,
+            round(mRNArray_len * round(tRNAlen / mRNAlen, 3) / float(tRNArray_len), 3),
+            round(len(overlaps) / float(tRNArray_len)*round(tRNAlen / mRNAlen, 3), 3),
+            round(len(overlaps) / float(mRNArray_len)*round(mRNAlen / mRNAlen, 3), 3)
+        )
+        )
 
 
 def read_file_to_array(file_path):
@@ -60,16 +84,29 @@ def prune_annotationBED(array):
     return array
 
 
-def tool_comparison(tools, files, out_path, work_dir):
+def tool_comparison(tools, files, out_path, work_dir, trimgalore_dir):
     for tool in tools:
-        os.chdir('{}/{}'.format(work_dir, tool))
+
         i = 0
         while i + 1 < len(files):
+            os.chdir(trimgalore_dir)
+            mRNAlen = get_written_Basepairs(files[i])
+            tRNAlen = get_written_Basepairs(files[i + 1])
+
+            os.chdir('{}/{}'.format(work_dir, tool))
             mRNArray = read_file_to_array(files[i])
             tRNArray = read_file_to_array(files[i + 1])
             overlaps = get_overlaps(mRNArray, tRNArray)
-            write_stats(tool, files[i].split("/", 1)[0], files[i + 1].split("/", 1)[0], len(tRNArray), len(mRNArray),
-                        overlaps, out_path)
+            write_stats(
+                tool,
+                files[i].split("/", 1)[0],
+                files[i + 1].split("/", 1)[0],
+                len(tRNArray), len(mRNArray),
+                overlaps,
+                out_path,
+                mRNAlen,
+                tRNAlen
+            )
             i += 2
 
 
@@ -80,8 +117,19 @@ def get_stat_from_stats(statfile_array, statnumber):
         statnumber += 8
     return out
 
+
 def create_out_directory(directory_path):
     try:
         os.makedirs(directory_path)
     except OSError as e:
         pass
+
+
+def get_written_Basepairs(name):
+    filepath = name + '.fastq.gz_trimming_report.txt'
+    with open(filepath, 'r') as file:
+        for i, line in enumerate(file):
+            if i == 31:  # Since line numbering starts from 0
+                parts = line.split()
+                number = parts[3].replace(',', '')  # Remove commas for numerical processing
+                return int(number)

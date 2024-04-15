@@ -13,6 +13,8 @@ if __name__ == "__main__":
                         type=str, nargs='+', help='List of tools')
     parser.add_argument('--out', default=r'../benchmarking_results.txt',
                         type=str, help='Path to benchmarking results')
+    parser.add_argument('--trimgalore', default='../trimgalore',
+                        type=str, help='path to directory with trimgalore reports')
     args = parser.parse_args()
 
 
@@ -26,7 +28,7 @@ if __name__ == "__main__":
         filepath_list = []
         for i in filesID_list: filepath_list.append('{}/{}.annotation.bed'.format(i, i))
 
-        utils.tool_comparison(args.tool_list, filepath_list, out, args.work_dir)
+        utils.tool_comparison(args.tool_list, filepath_list, out, args.work_dir, args.trimgalore)
         print('execution finished')
 
 
