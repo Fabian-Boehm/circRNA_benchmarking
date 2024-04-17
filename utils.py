@@ -144,18 +144,16 @@ def get_written_basepair_map(filenames, trimgalore_path):
     return written_basepairs
 
 def get_summed_location_and_length(hashpair, written_basepairs):
-    tRNA = []
-    tRNA_length = 0
-    for name in dict(hashpair)['tRNA']:
-        tRNA += read_file_to_array('{}/{}.annotation.bed'.format(name,name))
-        tRNA_length += written_basepairs[name]
-    hashpair['tRNA'] = tRNA
+    def process_rna_type(rna_type):
+        rna_list = []
+        rna_length = 0
+        for name in dict(hashpair)[rna_type]:
+            rna_list += read_file_to_array('{}/{}.annotation.bed'.format(name, name))
+            rna_length += written_basepairs[name]
+        hashpair[rna_type] = rna_list
+        return rna_length
 
-    mRNA = []
-    mRNA_length = 0
-    for name in dict(hashpair)['mRNA']:
-        mRNA += read_file_to_array('{}/{}.annotation.bed'.format(name, name))
-        mRNA_length += written_basepairs[name]
-    hashpair['mRNA'] = mRNA
-
+    tRNA_length = process_rna_type('tRNA')
+    mRNA_length = process_rna_type('mRNA')
     return hashpair, tRNA_length, mRNA_length
+
