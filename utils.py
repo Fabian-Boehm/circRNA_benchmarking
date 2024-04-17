@@ -49,8 +49,8 @@ def write_stats(tool, filename_m, filename_t, tRNArray_len, mRNArray_len, overla
             mRNAlen,
             tRNAlen,
             round(mRNArray_len * round(tRNAlen / mRNAlen, 3) / float(tRNArray_len), 3),
-            round(len(overlaps) / float(tRNArray_len)*round(tRNAlen / mRNAlen, 3), 3),
-            round(len(overlaps) / float(mRNArray_len)*round(mRNAlen / mRNAlen, 3), 3)
+            round(len(overlaps) / float(tRNArray_len) * round(tRNAlen / mRNAlen, 3), 3),
+            round(len(overlaps) / float(mRNArray_len) * round(mRNAlen / mRNAlen, 3), 3)
         )
         )
 
@@ -118,14 +118,16 @@ def get_stat_from_stats(statfile_array, statnumber):
     return out
 
 
-def create_out_directory(directory_path):
+def create_out_directory(directory_path, tool_list):
     try:
         os.makedirs(directory_path)
+        os.chdir(directory_path)
+        os.makedirs('./samples')
     except OSError as e:
         pass
 
 
-def get_written_Basepairs(name):
+def get_written_basepair(name):
     filepath = name + '.fastq.gz_trimming_report.txt'
     with open(filepath, 'r') as file:
         for i, line in enumerate(file):
@@ -133,3 +135,27 @@ def get_written_Basepairs(name):
                 parts = line.split()
                 number = parts[3].replace(',', '')  # Remove commas for numerical processing
                 return int(number)
+
+
+def get_written_basepair_map(filenames, trimgalore_path):
+    os.chdir(trimgalore_path)
+    written_basepairs = {}
+    for name in filenames: written_basepairs[name] = get_written_basepair(name)
+    return written_basepairs
+
+def get_summed_location_and_length(hashpair, written_basepairs):
+    tRNA = []
+    tRNA_length = 0
+    for name in dict(hashpair)['tRNA']:
+        tRNA += read_file_to_array('{}/{}.annotation.bed'.format(name,name))
+        tRNA_length += written_basepairs[name]
+    hashpair['tRNA'] = tRNA
+
+    mRNA = []
+    mRNA_length = 0
+    for name in dict(hashpair)['mRNA']:
+        mRNA += read_file_to_array('{}/{}.annotation.bed'.format(name, name))
+        mRNA_length += written_basepairs[name]
+    hashpair['mRNA'] = mRNA
+
+    return hashpair, tRNA_length, mRNA_length
