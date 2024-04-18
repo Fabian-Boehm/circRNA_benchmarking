@@ -12,10 +12,10 @@ if __name__ == "__main__":
                         type=str, nargs='+', help='Comma-separated list of tools')
 
     parser.add_argument('--tools_dir',
-                        default='/nfs/data3/CIRCEST/runs/benchmarking/results/circrna_discovery/', type=str,
+                        default='/nfs/data3/CIRCEST/runs/benchmarking/results/circrna_discovery', type=str,
                         help='Directory with the different tool directories')
     parser.add_argument('--out_dir',
-                        default=r'/nfs/data3/CIRCEST/runs/benchmarking/benchmarking_results/',
+                        default=r'/nfs/data3/CIRCEST/runs/benchmarking/benchmarking_results',
                         type=str, help='Path to benchmarking results')
     parser.add_argument('--trimgalore_dir',
                         default='/nfs/data3/CIRCEST/runs/benchmarking/results/trimgalore',
@@ -66,9 +66,10 @@ if __name__ == "__main__":
                     sample_basepairs_dict[sample] = {}
                     samples[sample], sample_basepairs_dict[sample]['tRNA'], sample_basepairs_dict[sample]['mRNA'] \
                         = utils.get_summed_location_and_length(samples[sample], written_basepairs_map)
+                    utils.compute_stats(tool,sample,samples[sample],sample_basepairs_dict[sample]['mRNA'], sample_basepairs_dict[sample]['tRNA'], out_path + '/samplestats')
+                utils.compute_stats(tool,tool,types,types_mRNA_length,types_tRNA_length,out_path + '/toolstats')
 
-                #samples, types_mRNA_length,types_tRNA_length,sample_basepairs_dict
-                utils.compute_stats()
+
 
 
 
