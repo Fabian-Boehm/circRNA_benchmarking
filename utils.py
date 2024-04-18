@@ -119,7 +119,9 @@ def compute_stats(tool_name, sample_name, sample, mRNA_basepairs, tRNA_basepairs
     tRNA_total_normalized = tRNA_total / normalisation_factor * tRNA_basepairs
     mRNA_overlap_percentage_normalized = mRNA_overlap_percentage / mRNA_total  # normalized overlap coeficcient
     tRNA_overlap_percentage_normalized = tRNA_overlap_percentage / tRNA_total
-    jaccard_index = overlap_count / (mRNA_total + tRNA_total - overlap_count)
+
+    union = mRNA_total + tRNA_total - overlap_count #not a stat
+    jaccard_index = overlap_count / union if union != 0 else 0
 
     # filewriting
 
