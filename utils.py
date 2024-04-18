@@ -1,6 +1,8 @@
 import os
 
 # factor to make more beautiful numbers for normalized values
+import traceback
+
 normalisation_factor = 0.25
 
 
@@ -54,7 +56,7 @@ def get_stat_from_stats(statfile_array, statnumber):
     return out
 
 
-def create_out_directory(directory_path, tool_list, modules, ):
+def create_out_directory(directory_path, tool_list, modules):
     try:
         os.makedirs(directory_path)
         os.chdir(directory_path)
@@ -68,20 +70,29 @@ def create_out_directory(directory_path, tool_list, modules, ):
             os.makedirs('./total')
             for tool in tool_list: os.makedirs('./' + tool)
     except OSError as e:
-        print('Error in outfile creation')
-
-
-def get_written_basepair(name):
-    filepath = name + '.fastq.gz_trimming_report.txt'
-    with open(filepath, 'r') as file:
-        for i, line in enumerate(file):
-            if i == 31:  # Since line numbering starts from 0
-                parts = line.split()
-                number = parts[3].replace(',', '')  # Remove commas for numerical processing
-                return int(number)
+        traceback.print_exc()
 
 
 def get_written_basepair_map(filenames, trimgalore_path):
+    def get_written_basepair(name):
+        out = 0
+        name = "_".join(name.split("_")[:14])
+        filepath = './' + name + '1.fastq.gz_trimming_report.txt'
+        with open(filepath, 'r') as file:
+            for i, line in enumerate(file):
+                if i == 31:  # Since line numbering starts from 0
+                    parts = line.split()
+                    number = parts[3].replace(',', '')  # Remove commas for numerical processing
+                    out += int(number)
+        filepath = './' + name + '2.fastq.gz_trimming_report.txt'
+        with open(filepath, 'r') as file:
+            for i, line in enumerate(file):
+                if i == 31:  # Since line numbering starts from 0
+                    parts = line.split()
+                    number = parts[3].replace(',', '')  # Remove commas for numerical processing
+                    out += int(number)
+        return out
+
     os.chdir(trimgalore_path)
     written_basepairs = {}
     for name in filenames: written_basepairs[name] = get_written_basepair(name)
@@ -120,7 +131,7 @@ def compute_stats(tool_name, sample_name, sample, mRNA_basepairs, tRNA_basepairs
     mRNA_overlap_percentage_normalized = mRNA_overlap_percentage / mRNA_total  # normalized overlap coeficcient
     tRNA_overlap_percentage_normalized = tRNA_overlap_percentage / tRNA_total
 
-    union = mRNA_total + tRNA_total - overlap_count #not a stat
+    union = mRNA_total + tRNA_total - overlap_count  # not a stat
     jaccard_index = overlap_count / union if union != 0 else 0
 
     # filewriting
@@ -156,4 +167,3 @@ def compute_stats(tool_name, sample_name, sample, mRNA_basepairs, tRNA_basepairs
                 tRNA_overlap_percentage_normalized
             )
         )
-

@@ -8,7 +8,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--tool_list',
-                        default='circexplorer,circrna_finder,ciriquant,dcc,find_circ,segemehl',
+                        default='circexplorer2,circrna_finder,dcc,find_circ,segemehl',
                         type=str, nargs='+', help='Comma-separated list of tools')
 
     parser.add_argument('--tools_dir',
@@ -31,12 +31,14 @@ if __name__ == "__main__":
         tool_out_path = os.path.abspath(args.tools_dir)
         trimgalore_path = os.path.abspath(args.trimgalore_dir)
         out_path = os.path.abspath(args.out_dir)
-        utils.create_out_directories(out_path)
-
         tool_list = str(args.tool_list).strip().split(',')
+        utils.create_out_directory(out_path,tool_list,args.module)
+
+
 
         for tool in tool_list:
-            filenames = utils.list_directories(tool_out_path + tool).sort()
+            filenames = utils.list_directories(args.tools_dir + tool)
+            filenames.sort()
             written_basepairs_map = utils.get_written_basepair_map(filenames, trimgalore_path)
 
             sample_id = ''  # field 0,1
