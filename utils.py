@@ -128,18 +128,18 @@ def compute_stats(tool_name, sample_name, sample, mRNA_basepairs, tRNA_basepairs
     with open(directory + '/' + tool_name + '.txt', 'a') as statfile:
         statfile.write(
             '#\t{}'
-            'mRNA_basepairs =\t{}'
-            'tRNA_basepairs =\t{}]'
-            'mRNA_total =\t{}'
-            'mRNA_total_normalized =\t{}'
-            'tRNA_total =\t{}'
-            'tRNA_total_normalized =\t{}'
-            'overlap_count =\t{}'
-            'jaccard_index =\t{}'
-            'mRNA_overlap_percentage =\t{}'
-            'mRNA_overlap_percentage_normalized =\t{}'
-            'tRNA_overlap_percentage =\t{}'
-            'tRNA_overlap_percentage_normalized =\t{}'
+            'mRNA_basepairs\t{}'
+            'tRNA_basepairs\t{}]'
+            'mRNA_total\t{}'
+            'mRNA_total_normalized\t{}'
+            'tRNA_total\t{}'
+            'tRNA_total_normalized\t{}'
+            'overlap_count\t{}'
+            'jaccard_index\t{}'
+            'mRNA_overlap_percentage\t{}'
+            'mRNA_overlap_percentage_normalized\t{}'
+            'tRNA_overlap_percentage\t{}'
+            'tRNA_overlap_percentage_normalized\t{}'
                 .format(
                 sample_name,
                 mRNA_basepairs,
