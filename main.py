@@ -20,6 +20,10 @@ if __name__ == "__main__":
     parser.add_argument('--trimgalore_dir',
                         default='/nfs/data3/CIRCEST/runs/benchmarking/results/trimgalore',
                         type=str, help='path to directory with trimgalore reports')
+
+    parser.add_argument('--module',
+                        default='01',
+                        type=str, help='0 = create stats, 1 = create plots')
     args = parser.parse_args()
 
 
@@ -62,6 +66,11 @@ if __name__ == "__main__":
                     sample_basepairs_dict[sample] = {}
                     samples[sample], sample_basepairs_dict[sample]['tRNA'], sample_basepairs_dict[sample]['mRNA'] \
                         = utils.get_summed_location_and_length(samples[sample], written_basepairs_map)
+
+                #samples, types_mRNA_length,types_tRNA_length,sample_basepairs_dict
+                utils.compute_stats()
+
+
 
 
     # utils.tool_comparison(args.tool_list, filepath_list, out, args.work_dir, args.trimgalore)

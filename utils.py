@@ -1,5 +1,8 @@
 import os
 
+# factor to make more beautiful numbers for normalized values
+normalisation_factor = 0.25
+
 
 def get_overlaps(array1, array2):
     overlaps = []
@@ -12,47 +15,6 @@ def get_overlaps(array1, array2):
                 if (one[1] > two[1] and one[2] < two[1]) or (one[1] > two[2] and one[2] < two[2]):
                     overlaps.append([one[0], one[3], one[1], one[2], two[1], two[2]])
     return overlaps
-
-
-def write_stats(tool, filename_m, filename_t, tRNArray_len, mRNArray_len, overlaps, result_path,
-                mRNAlen, tRNAlen):
-    with open(result_path, 'a') as file:
-        file.write('#\t{}\t{}\t{}\n'
-                   'mRNA total:\t{}\n'
-                   'tRNA total:\t{}\n'
-                   'mRNA/tRNA proportions:\t{:.3f}\n'
-                   'Overlaps total:\t{}\n'
-                   'Overlaps percentile tRNA:\t{:.3f}%\n'
-                   'Overlaps percentile mRNA:\t{:.3f}%\n'
-
-                   'Filelength Proportion(mRNA/tRNA):\t{}\n'
-                   'Filelength Proportion(tRNA/mRNA):\t{}\n'
-                   'mRNA filelength:\t{}\n'
-                   'tRNA filelength:\t{}\n'
-                   'mRNA/tRNA normalized proportions:\t{:.3f}\n'
-
-                   'Overlaps normalized percentile tRNA:\t{:.3f}%\n'
-                   'Overlaps normalized percentile mRNA:\t{:.3f}%\n'
-
-            .format(
-            tool, filename_m, filename_t,
-
-            mRNArray_len,
-            tRNArray_len,
-            round(mRNArray_len / float(tRNArray_len), 3),
-            len(overlaps),
-            round(len(overlaps) / float(tRNArray_len), 3),
-            round(len(overlaps) / float(mRNArray_len), 3),
-
-            round(mRNAlen / tRNAlen, 3),
-            round(tRNAlen / mRNAlen, 3),
-            mRNAlen,
-            tRNAlen,
-            round(mRNArray_len * round(tRNAlen / mRNAlen, 3) / float(tRNArray_len), 3),
-            round(len(overlaps) / float(tRNArray_len) * round(tRNAlen / mRNAlen, 3), 3),
-            round(len(overlaps) / float(mRNArray_len) * round(mRNAlen / mRNAlen, 3), 3)
-        )
-        )
 
 
 def read_file_to_array(file_path):
@@ -84,32 +46,6 @@ def prune_annotationBED(array):
     return array
 
 
-def tool_comparison(tools, files, out_path, work_dir, trimgalore_dir):
-    for tool in tools:
-
-        i = 0
-        while i + 1 < len(files):
-            os.chdir(trimgalore_dir)
-            mRNAlen = get_written_Basepairs(files[i])
-            tRNAlen = get_written_Basepairs(files[i + 1])
-
-            os.chdir('{}/{}'.format(work_dir, tool))
-            mRNArray = read_file_to_array(files[i])
-            tRNArray = read_file_to_array(files[i + 1])
-            overlaps = get_overlaps(mRNArray, tRNArray)
-            write_stats(
-                tool,
-                files[i].split("/", 1)[0],
-                files[i + 1].split("/", 1)[0],
-                len(tRNArray), len(mRNArray),
-                overlaps,
-                out_path,
-                mRNAlen,
-                tRNAlen
-            )
-            i += 2
-
-
 def get_stat_from_stats(statfile_array, statnumber):
     out = []
     while statnumber < len(statfile_array):
@@ -118,13 +54,21 @@ def get_stat_from_stats(statfile_array, statnumber):
     return out
 
 
-def create_out_directory(directory_path, tool_list):
+def create_out_directory(directory_path, tool_list, modules, ):
     try:
         os.makedirs(directory_path)
         os.chdir(directory_path)
-        os.makedirs('./samples')
+        if '0' in modules:
+            os.makedirs('./toolstats')
+            os.makedirs('./samplestats')
+        if '1' in modules:
+            os.makedirs('./tool_plots')
+            os.makedirs('./sample_plots')
+            os.chdir('./sample_plots')
+            os.makedirs('./total')
+            for tool in tool_list: os.makedirs('./' + tool)
     except OSError as e:
-        pass
+        print('Error in outfile creation')
 
 
 def get_written_basepair(name):
@@ -143,6 +87,7 @@ def get_written_basepair_map(filenames, trimgalore_path):
     for name in filenames: written_basepairs[name] = get_written_basepair(name)
     return written_basepairs
 
+
 def get_summed_location_and_length(hashpair, written_basepairs):
     def process_rna_type(rna_type):
         rna_list = []
@@ -156,4 +101,57 @@ def get_summed_location_and_length(hashpair, written_basepairs):
     tRNA_length = process_rna_type('tRNA')
     mRNA_length = process_rna_type('mRNA')
     return hashpair, tRNA_length, mRNA_length
+
+
+def compute_stats(tool_name, sample_name, sample, mRNA_basepairs, tRNA_basepairs, directory):
+    os.chdir(directory)
+    sample;
+    mRNA_basepairs;
+    tRNA_basepairs;
+
+    mRNA_total = len(sample['mRNA'])
+    tRNA_total = len(sample['tRNA'])
+    overlap_count = get_overlaps(sample['mRNA'], sample['tRNA'])
+    mRNA_overlap_percentage = overlap_count / mRNA_total
+    tRNA_overlap_percentage = overlap_count / tRNA_total
+
+    mRNA_total_normalized = mRNA_total / normalisation_factor * mRNA_basepairs  # overlap coefficient
+    tRNA_total_normalized = tRNA_total / normalisation_factor * tRNA_basepairs
+    mRNA_overlap_percentage_normalized = mRNA_overlap_percentage / mRNA_total  # normalized overlap coeficcient
+    tRNA_overlap_percentage_normalized = tRNA_overlap_percentage / tRNA_total
+    jaccard_index = overlap_count / (mRNA_total + tRNA_total - overlap_count)
+
+    # filewriting
+
+    with open(directory + '/' + tool_name + '.txt', 'a') as statfile:
+        statfile.write(
+            '#\t{}'
+            'mRNA_basepairs =\t{}'
+            'tRNA_basepairs =\t{}]'
+            'mRNA_total =\t{}'
+            'mRNA_total_normalized =\t{}'
+            'tRNA_total =\t{}'
+            'tRNA_total_normalized =\t{}'
+            'overlap_count =\t{}'
+            'jaccard_index =\t{}'
+            'mRNA_overlap_percentage =\t{}'
+            'mRNA_overlap_percentage_normalized =\t{}'
+            'tRNA_overlap_percentage =\t{}'
+            'tRNA_overlap_percentage_normalized =\t{}'
+                .format(
+                sample_name,
+                mRNA_basepairs,
+                tRNA_basepairs,
+                mRNA_total,
+                mRNA_total_normalized,
+                tRNA_total,
+                tRNA_total_normalized,
+                overlap_count,
+                jaccard_index,
+                mRNA_overlap_percentage,
+                mRNA_overlap_percentage_normalized,
+                tRNA_overlap_percentage,
+                tRNA_overlap_percentage_normalized
+            )
+        )
 
