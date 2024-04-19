@@ -32,14 +32,12 @@ if __name__ == "__main__":
         trimgalore_path = os.path.abspath(args.trimgalore_dir)
         out_path = os.path.abspath(args.out_dir)
         tool_list = str(args.tool_list).strip().split(',')
-        utils.create_out_directory(out_path,tool_list,args.module)
-
-
+        utils.create_out_directory(out_path, tool_list, args.module)
 
         for tool in tool_list:
             filenames = utils.list_directories(args.tools_dir + tool)
             filenames.sort()
-            written_basepairs_map = utils.get_written_basepair_map(filenames, trimgalore_path)
+            written_basepairs_map = utils.get_written_basepair_map(filenames, args.trimgalore_dir)
 
             sample_id = ''  # field 0,1
             type = ''  # field 4 (3 after compression)
@@ -50,14 +48,14 @@ if __name__ == "__main__":
             for file in filenames:
                 file_id = str(file).split('_')
                 file_id[0] = file_id[0] + '_' + file_id[1]
-                file_id = [file_id[0], file_id[3]]  # sample + type extracted
+                file_id = [file_id[0], file_id[4]]  # sample + type extracted
                 # if no list there create one to allow append
-                if not (file_id[0] in samples and isinstance(samples[file_id[0]][file_id[3]], list)):
-                    samples[file_id[0]][file_id[3]] = []
-                list(samples[file_id[0]][file_id[3]]).append(file)
-                types[file_id[3]].append(file)
+                if not (file_id[0] in samples): samples[file_id[0]] = {}
+                if not (file_id[1] in samples[file_id[0]]): samples[file_id[0]][file_id[1]] = []
+                list(samples[file_id[0]][file_id[1]]).append(file)
+                types[file_id[1]].append(file)
 
-                os.chdir(tool_out_path + tool)
+                os.chdir(args.tools_dir + tool)
                 # get Summed array
                 # type
                 types, types_tRNA_length, types_mRNA_length = utils.get_summed_location_and_length(types,
@@ -68,12 +66,9 @@ if __name__ == "__main__":
                     sample_basepairs_dict[sample] = {}
                     samples[sample], sample_basepairs_dict[sample]['tRNA'], sample_basepairs_dict[sample]['mRNA'] \
                         = utils.get_summed_location_and_length(samples[sample], written_basepairs_map)
-                    utils.compute_stats(tool,sample,samples[sample],sample_basepairs_dict[sample]['mRNA'], sample_basepairs_dict[sample]['tRNA'], out_path + '/samplestats')
-                utils.compute_stats(tool,tool,types,types_mRNA_length,types_tRNA_length,out_path + '/toolstats')
-
-
-
-
+                    utils.compute_stats(tool, sample, samples[sample], sample_basepairs_dict[sample]['mRNA'],
+                                        sample_basepairs_dict[sample]['tRNA'], out_path + '/samplestats')
+                utils.compute_stats(tool, tool, types, types_mRNA_length, types_tRNA_length, out_path + '/toolstats')
 
 
     # utils.tool_comparison(args.tool_list, filepath_list, out, args.work_dir, args.trimgalore)

@@ -1,4 +1,5 @@
 import os
+import re
 
 # factor to make more beautiful numbers for normalized values
 import traceback
@@ -76,15 +77,22 @@ def create_out_directory(directory_path, tool_list, modules):
 def get_written_basepair_map(filenames, trimgalore_path):
     def get_written_basepair(name):
         out = 0
-        name = "_".join(name.split("_")[:14])
-        filepath = './' + name + '1.fastq.gz_trimming_report.txt'
+        extra = ''
+        pattern = r'(_R\d_\d{3})'
+        name = re.split(pattern, name, 1)
+        if (len(name) > 1): extra = name[1]
+        pattern = r'(_L\d{3})'
+        name = re.split(pattern, name[0], 1)
+        name = name[0] + name[1] + extra
+
+        filepath = trimgalore_path + name + '_1.fastq.gz_trimming_report.txt'
         with open(filepath, 'r') as file:
             for i, line in enumerate(file):
                 if i == 31:  # Since line numbering starts from 0
                     parts = line.split()
                     number = parts[3].replace(',', '')  # Remove commas for numerical processing
                     out += int(number)
-        filepath = './' + name + '2.fastq.gz_trimming_report.txt'
+        filepath = trimgalore_path + name + '_2.fastq.gz_trimming_report.txt'
         with open(filepath, 'r') as file:
             for i, line in enumerate(file):
                 if i == 31:  # Since line numbering starts from 0
@@ -108,6 +116,10 @@ def get_summed_location_and_length(hashpair, written_basepairs):
             rna_length += written_basepairs[name]
         hashpair[rna_type] = rna_list
         return rna_length
+
+    if not (hashpair.keys() == ['tRNA', 'mRNA']):
+        print(hashpair.keys())
+        return None, 0, 0
 
     tRNA_length = process_rna_type('tRNA')
     mRNA_length = process_rna_type('mRNA')
