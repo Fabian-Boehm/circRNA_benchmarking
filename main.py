@@ -75,7 +75,7 @@ if __name__ == "__main__":
                     = utils.get_summed_location_and_length(samples[sample], written_basepairs_map)
                 utils.compute_stats(tool, sample, samples[sample], sample_basepairs_dict[sample]['mRNA'],
                                     sample_basepairs_dict[sample]['tRNA'], out_path + '/sample_stats')
-                print(sample + 'finished')
+                print(sample + '\tfinished')
             utils.compute_stats(tool, tool, types, types_mRNA_length, types_tRNA_length, out_path + '/tool_stats')
             print ('tool_stats finished')
 
