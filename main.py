@@ -54,7 +54,7 @@ if __name__ == "__main__":
                 # if no list there create one to allow append
                 if not (file_id[0] in samples.keys()): samples[file_id[0]] = {}
                 if not (file_id[1] in samples[file_id[0]].keys()): samples[file_id[0]][file_id[1]] = []
-                list(samples[file_id[0]][file_id[1]]).append(file)
+                samples[file_id[0]][file_id[1]].append(file)
                 print(samples[file_id[0]][file_id[1]])
                 types[file_id[1]].append(file)
 
