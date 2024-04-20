@@ -42,6 +42,7 @@ def list_directories(path):
             print(path+'/'+directories[i] + '\t.bed file does not exist')
             directories.pop(i)
         i += 1
+    print(directories)
     return directories
 
 
