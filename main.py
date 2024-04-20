@@ -3,6 +3,8 @@ import utils
 import os
 import argparse
 
+#TODO: samples don't get saved coorectly
+
 if __name__ == "__main__":
     # Arguments
     parser = argparse.ArgumentParser()
@@ -61,6 +63,12 @@ if __name__ == "__main__":
                 types, types_tRNA_length, types_mRNA_length = utils.get_summed_location_and_length(types,
                                                                                                    written_basepairs_map)
                 # sample
+                try :
+                    for sample in samples.keys():
+                        print(sample.keys())
+                except:
+                    print(sample)
+
                 sample_basepairs_dict = {}
                 for sample in samples.keys():
                     sample_basepairs_dict[sample] = {}

@@ -88,14 +88,14 @@ def get_written_basepair_map(filenames, trimgalore_path):
         filepath = trimgalore_path + name + '_1.fastq.gz_trimming_report.txt'
         with open(filepath, 'r') as file:
             for i, line in enumerate(file):
-                if i == 31:  # Since line numbering starts from 0
+                if i == 32:  # Since line numbering starts from 0
                     parts = line.split()
                     number = parts[3].replace(',', '')  # Remove commas for numerical processing
                     out += int(number)
         filepath = trimgalore_path + name + '_2.fastq.gz_trimming_report.txt'
         with open(filepath, 'r') as file:
             for i, line in enumerate(file):
-                if i == 31:  # Since line numbering starts from 0
+                if i == 32:  # Since line numbering starts from 0
                     parts = line.split()
                     number = parts[3].replace(',', '')  # Remove commas for numerical processing
                     out += int(number)
