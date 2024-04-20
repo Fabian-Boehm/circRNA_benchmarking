@@ -4,7 +4,7 @@ import re
 # factor to make more beautiful numbers for normalized values
 import traceback
 
-normalisation_factor = 0.00000001
+normalisation_factor = 0.00000005
 
 
 def get_overlaps(array1, array2):
@@ -73,8 +73,8 @@ def create_out_directory(directory_path, tool_list, modules):
         os.makedirs(directory_path)
         os.chdir(directory_path)
         if '0' in modules:
-            os.makedirs('./toolstats')
-            os.makedirs('./samplestats')
+            os.makedirs('./tool_stats')
+            os.makedirs('./sample_stats')
         if '1' in modules:
             os.makedirs('./tool_plots')
             os.makedirs('./sample_plots')

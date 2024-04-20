@@ -37,6 +37,7 @@ if __name__ == "__main__":
         utils.create_out_directory(out_path, tool_list, args.module)
 
         for tool in tool_list:
+            print(tool)
             filenames = utils.list_directories(args.tools_dir + tool)
             filenames.sort()
             written_basepairs_map = utils.get_written_basepair_map(filenames, args.trimgalore_dir)
@@ -57,6 +58,8 @@ if __name__ == "__main__":
                 samples[file_id[0]][file_id[1]].append(file)
                 types[file_id[1]].append(file)
 
+            print('Data read')
+
             os.chdir(args.tools_dir + tool)
             # get Summed array
             # type
@@ -71,8 +74,10 @@ if __name__ == "__main__":
                 samples[sample], sample_basepairs_dict[sample]['tRNA'], sample_basepairs_dict[sample]['mRNA'] \
                     = utils.get_summed_location_and_length(samples[sample], written_basepairs_map)
                 utils.compute_stats(tool, sample, samples[sample], sample_basepairs_dict[sample]['mRNA'],
-                                    sample_basepairs_dict[sample]['tRNA'], out_path + '/samplestats')
-            utils.compute_stats(tool, tool, types, types_mRNA_length, types_tRNA_length, out_path + '/toolstats')
+                                    sample_basepairs_dict[sample]['tRNA'], out_path + '/sample_stats')
+                print(sample + 'finished')
+            utils.compute_stats(tool, tool, types, types_mRNA_length, types_tRNA_length, out_path + '/tool_stats')
+            print ('tool_stats finished')
 
 
     # utils.tool_comparison(args.tool_list, filepath_list, out, args.work_dir, args.trimgalore)
