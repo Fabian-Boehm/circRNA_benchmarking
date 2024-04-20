@@ -31,21 +31,24 @@ def read_file_to_array(file_path):
 def extract_column(array, column_index):
     return [row[column_index] for row in array]
 
+    def list_directories(path):
+        # Ensure the path ends with a slash
+        path = path.rstrip('/') + '/'
+        # List comprehension to get all directories at the given path
+        directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
-def list_directories(path):
-    # List comprehension to get all directories at the given path
-    directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
+        # Create a new list to store directories with matching .annotation.bed files
+        valid_directories = []
+        for directory in directories:
+            annotation_file = '{}{}/{}.annotation.bed'.format(path, directory, directory)
+            if os.path.exists(annotation_file):
+                valid_directories.append(directory)
+            else:
+                print
+                '{}\t.bed file does not exist'.format(path + directory)
 
-    valid_directories = []
-    for directory in directories:
-        annotation_file = f'{path}{directory}/{directory}.annotation.bed'
-        if os.path.exists(annotation_file):
-            valid_directories.append(directory)
-        else:
-            print(f'{path}{directory} \t.bed file does not exist')
-
-    print(valid_directories)
-    return directories
+        print valid_directories
+        return valid_directories
 
 
 def prune_annotationBED(array):
