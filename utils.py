@@ -31,6 +31,7 @@ def read_file_to_array(file_path):
 def extract_column(array, column_index):
     return [row[column_index] for row in array]
 
+
 def list_directories(path):
     # Ensure the path ends with a slash
     path = path.rstrip('/') + '/'
@@ -123,7 +124,7 @@ def get_summed_location_and_length(hashpair, written_basepairs):
         rna_list = []
         rna_length = 0
         for name in dict(hashpair)[rna_type]:
-            rna_list += read_file_to_array(os.getcwd()+'/{}/{}.annotation.bed'.format(name, name))
+            rna_list += read_file_to_array(os.getcwd() + '/{}/{}.annotation.bed'.format(name, name))
             rna_length += written_basepairs[name]
         hashpair[rna_type] = rna_list
         return rna_length
@@ -156,8 +157,8 @@ def compute_stats(tool_name, sample_name, sample, mRNA_basepairs, tRNA_basepairs
     mRNA_overlap_percentage_normalized = mRNA_overlap_percentage / mRNA_total  # normalized overlap coeficcient
     tRNA_overlap_percentage_normalized = tRNA_overlap_percentage / tRNA_total
 
-    total_proportions = mRNA_total/tRNA_total
-    total_proportions_normalized = mRNA_total_normalized/ tRNA_total_normalized
+    total_proportions = (mRNA_total * 1.0) / tRNA_total
+    total_proportions_normalized = mRNA_total_normalized / tRNA_total_normalized
 
     union = mRNA_total + tRNA_total - overlap_count  # not a stat
     jaccard_index = overlap_count / union if union != 0 else 0
