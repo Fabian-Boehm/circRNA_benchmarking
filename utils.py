@@ -36,13 +36,15 @@ def list_directories(path):
     # List comprehension to get all directories at the given path
     directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
-    i = 0
-    while i < len(directories):
-        if not os.path.exists('{}/{}.annotation.bed'.format(directories[i], directories[i])):
-            print(path+'/'+directories[i] + '\t.bed file does not exist')
-            directories.pop(i)
-        i += 1
-    print(directories)
+    valid_directories = []
+    for directory in directories:
+        annotation_file = f'{path}{directory}/{directory}.annotation.bed'
+        if os.path.exists(annotation_file):
+            valid_directories.append(directory)
+        else:
+            print(f'{path}{directory} \t.bed file does not exist')
+
+    print(valid_directories)
     return directories
 
 
