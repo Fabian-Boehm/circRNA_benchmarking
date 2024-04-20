@@ -48,9 +48,11 @@ if __name__ == "__main__":
             types['mRNA'] = []
             types['tRNA'] = []
             for file in filenames:
+                print(file)
                 file_id = str(file).split('_')
                 file_id[0] = file_id[0] + '_' + file_id[1]
                 file_id = [file_id[0], file_id[4]]  # sample + type extracted
+                print(file_id)
                 # if no list there create one to allow append
                 if not (file_id[0] in samples): samples[file_id[0]] = {}
                 if not (file_id[1] in samples[file_id[0]]): samples[file_id[0]][file_id[1]] = []
