@@ -65,7 +65,9 @@ if __name__ == "__main__":
             # sample
             try :
                 for sample in samples.keys():
+                    print('Keys:')
                     print(sample.keys())
+                    print('end')
             except:
                 print(sample)
 
