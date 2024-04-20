@@ -67,6 +67,7 @@ if __name__ == "__main__":
             sample_basepairs_dict = {}
             for sample in samples.keys():
                 sample_basepairs_dict[sample] = {}
+                os.chdir(args.tools_dir + tool)
                 samples[sample], sample_basepairs_dict[sample]['tRNA'], sample_basepairs_dict[sample]['mRNA'] \
                     = utils.get_summed_location_and_length(samples[sample], written_basepairs_map)
                 utils.compute_stats(tool, sample, samples[sample], sample_basepairs_dict[sample]['mRNA'],
