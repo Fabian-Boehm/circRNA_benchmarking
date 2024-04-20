@@ -48,37 +48,35 @@ if __name__ == "__main__":
             types['mRNA'] = []
             types['tRNA'] = []
             for file in filenames:
-                print(file)
                 file_id = str(file).split('_')
                 file_id[0] = file_id[0] + '_' + file_id[1]
                 file_id = [file_id[0], file_id[4]]  # sample + type extracted
-                print(file_id)
                 # if no list there create one to allow append
                 if not (file_id[0] in samples): samples[file_id[0]] = {}
                 if not (file_id[1] in samples[file_id[0]]): samples[file_id[0]][file_id[1]] = []
                 list(samples[file_id[0]][file_id[1]]).append(file)
                 types[file_id[1]].append(file)
 
-                os.chdir(args.tools_dir + tool)
-                # get Summed array
-                # type
-                types, types_tRNA_length, types_mRNA_length = utils.get_summed_location_and_length(types,
-                                                                                                   written_basepairs_map)
-                # sample
-                try :
-                    for sample in samples.keys():
-                        print(sample.keys())
-                except:
-                    print(sample)
-
-                sample_basepairs_dict = {}
+            os.chdir(args.tools_dir + tool)
+            # get Summed array
+            # type
+            types, types_tRNA_length, types_mRNA_length = utils.get_summed_location_and_length(types,
+                                                                                               written_basepairs_map)
+            # sample
+            try :
                 for sample in samples.keys():
-                    sample_basepairs_dict[sample] = {}
-                    samples[sample], sample_basepairs_dict[sample]['tRNA'], sample_basepairs_dict[sample]['mRNA'] \
-                        = utils.get_summed_location_and_length(samples[sample], written_basepairs_map)
-                    utils.compute_stats(tool, sample, samples[sample], sample_basepairs_dict[sample]['mRNA'],
-                                        sample_basepairs_dict[sample]['tRNA'], out_path + '/samplestats')
-                utils.compute_stats(tool, tool, types, types_mRNA_length, types_tRNA_length, out_path + '/toolstats')
+                    print(sample.keys())
+            except:
+                print(sample)
+
+            sample_basepairs_dict = {}
+            for sample in samples.keys():
+                sample_basepairs_dict[sample] = {}
+                samples[sample], sample_basepairs_dict[sample]['tRNA'], sample_basepairs_dict[sample]['mRNA'] \
+                    = utils.get_summed_location_and_length(samples[sample], written_basepairs_map)
+                utils.compute_stats(tool, sample, samples[sample], sample_basepairs_dict[sample]['mRNA'],
+                                    sample_basepairs_dict[sample]['tRNA'], out_path + '/samplestats')
+            utils.compute_stats(tool, tool, types, types_mRNA_length, types_tRNA_length, out_path + '/toolstats')
 
 
     # utils.tool_comparison(args.tool_list, filepath_list, out, args.work_dir, args.trimgalore)
