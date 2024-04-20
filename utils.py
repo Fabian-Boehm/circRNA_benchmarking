@@ -123,7 +123,6 @@ def get_summed_location_and_length(hashpair, written_basepairs):
         rna_list = []
         rna_length = 0
         for name in dict(hashpair)[rna_type]:
-            print(os.getcwd()+'/{}/{}.annotation.bed'.format(name, name))
             rna_list += read_file_to_array(os.getcwd()+'/{}/{}.annotation.bed'.format(name, name))
             rna_length += written_basepairs[name]
         hashpair[rna_type] = rna_list
@@ -149,14 +148,11 @@ def compute_stats(tool_name, sample_name, sample, mRNA_basepairs, tRNA_basepairs
     tRNA_total = len(sample['tRNA'])
     overlap_count = len(get_overlaps(sample['mRNA'], sample['tRNA']))
 
-    print(overlap_count)
-    print(mRNA_total)
-
     mRNA_overlap_percentage = overlap_count / mRNA_total
     tRNA_overlap_percentage = overlap_count / tRNA_total
 
-    mRNA_total_normalized = mRNA_total / normalisation_factor * mRNA_basepairs  # overlap coefficient
-    tRNA_total_normalized = tRNA_total / normalisation_factor * tRNA_basepairs
+    mRNA_total_normalized = mRNA_total / (normalisation_factor * mRNA_basepairs)  # overlap coefficient
+    tRNA_total_normalized = tRNA_total / (normalisation_factor * tRNA_basepairs)
     mRNA_overlap_percentage_normalized = mRNA_overlap_percentage / mRNA_total  # normalized overlap coeficcient
     tRNA_overlap_percentage_normalized = tRNA_overlap_percentage / tRNA_total
 
@@ -169,7 +165,7 @@ def compute_stats(tool_name, sample_name, sample, mRNA_basepairs, tRNA_basepairs
         statfile.write(
             '#\t{}\n'
             'mRNA_basepairs\t{}\n'
-            'tRNA_basepairs\t{}]\n'
+            'tRNA_basepairs\t{}\n'
             'mRNA_total\t{}\n'
             'mRNA_total_normalized\t{}\n'
             'tRNA_total\t{}\n'
