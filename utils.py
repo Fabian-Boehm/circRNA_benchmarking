@@ -39,8 +39,8 @@ def list_directories(path):
     i = 0
     while i < len(directories):
         if not os.path.exists('{}/{}.annotation.bed'.format(directories[i], directories[i])):
-            print(directories[i] + '\tfile does not exist')
-            del directories[i]
+            print(path+'/'+directories[i] + '\t.bed file does not exist')
+            directories.pop(i)
         i += 1
     return directories
 
