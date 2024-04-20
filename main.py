@@ -68,7 +68,7 @@ if __name__ == "__main__":
             # sample
 
             sample_basepairs_dict = {}
-            for sample in samples.keys():
+            for sample in sorted(samples.keys()):
                 sample_basepairs_dict[sample] = {}
                 os.chdir(args.tools_dir + tool)
                 samples[sample], sample_basepairs_dict[sample]['tRNA'], sample_basepairs_dict[sample]['mRNA'] \
