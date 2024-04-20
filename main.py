@@ -51,9 +51,11 @@ if __name__ == "__main__":
                 file_id = str(file).split('_')
                 file_id[0] = file_id[0] + '_' + file_id[1]
                 file_id = [file_id[0], file_id[4]]  # sample + type extracted
+                print(file)
+                print(file_id)
                 # if no list there create one to allow append
-                if not (file_id[0] in samples): samples[file_id[0]] = {}
-                if not (file_id[1] in samples[file_id[0]]): samples[file_id[0]][file_id[1]] = []
+                if not (file_id[0] in samples.keys()): samples[file_id[0]] = {}
+                if not (file_id[1] in samples[file_id[0]].keys()): samples[file_id[0]][file_id[1]] = []
                 list(samples[file_id[0]][file_id[1]]).append(file)
                 types[file_id[1]].append(file)
 
@@ -63,13 +65,6 @@ if __name__ == "__main__":
             types, types_tRNA_length, types_mRNA_length = utils.get_summed_location_and_length(types,
                                                                                                written_basepairs_map)
             # sample
-            try :
-                for sample in samples.keys():
-                    print('Keys:')
-                    print(sample.keys())
-                    print('end')
-            except:
-                print(sample)
 
             sample_basepairs_dict = {}
             for sample in samples.keys():
