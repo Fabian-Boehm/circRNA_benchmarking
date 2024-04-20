@@ -4,7 +4,7 @@ import re
 # factor to make more beautiful numbers for normalized values
 import traceback
 
-normalisation_factor = 0.25
+normalisation_factor = 0.00000001
 
 
 def get_overlaps(array1, array2):
