@@ -123,8 +123,8 @@ def get_summed_location_and_length(hashpair, written_basepairs):
         rna_list = []
         rna_length = 0
         for name in dict(hashpair)[rna_type]:
-            print(os.getcwd())
-            rna_list += read_file_to_array('{}/{}.annotation.bed'.format(name, name))
+            print(os.getcwd()+'/{}/{}.annotation.bed'.format(name, name))
+            rna_list += read_file_to_array(os.getcwd()+'/{}/{}.annotation.bed'.format(name, name))
             rna_length += written_basepairs[name]
         hashpair[rna_type] = rna_list
         return rna_length
