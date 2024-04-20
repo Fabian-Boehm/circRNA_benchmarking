@@ -117,9 +117,19 @@ def get_summed_location_and_length(hashpair, written_basepairs):
         hashpair[rna_type] = rna_list
         return rna_length
 
+    #check legal
     if not (hashpair.keys() == ['tRNA', 'mRNA']):
         print(hashpair.keys())
         return None, 0, 0
+    for name in dict(hashpair)['tRNA']:
+        if not os.path.exists('{}/{}.annotation.bed'.format(name, name)):
+            print(name + '\tfile does not exist')
+            return None, 0, 0
+    for name in dict(hashpair)['mRNA']:
+        if not os.path.exists('{}/{}.annotation.bed'.format(name, name)):
+            print(name + '\tfile does not exist')
+            return None, 0, 0
+
 
     tRNA_length = process_rna_type('tRNA')
     mRNA_length = process_rna_type('mRNA')
