@@ -35,6 +35,13 @@ def extract_column(array, column_index):
 def list_directories(path):
     # List comprehension to get all directories at the given path
     directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
+
+    i = 0
+    while i < len(directories):
+        if not os.path.exists('{}/{}.annotation.bed'.format(directories[i], directories[i])):
+            print(directories[i] + '\tfile does not exist')
+            del directories[i]
+        i += 1
     return directories
 
 
@@ -117,19 +124,10 @@ def get_summed_location_and_length(hashpair, written_basepairs):
         hashpair[rna_type] = rna_list
         return rna_length
 
-    #check legal
+    # check legal
     if not (hashpair.keys() == ['tRNA', 'mRNA']):
         print(hashpair.keys())
         return None, 0, 0
-    for name in dict(hashpair)['tRNA']:
-        if not os.path.exists('{}/{}.annotation.bed'.format(name, name)):
-            print(name + '\tfile does not exist')
-            return None, 0, 0
-    for name in dict(hashpair)['mRNA']:
-        if not os.path.exists('{}/{}.annotation.bed'.format(name, name)):
-            print(name + '\tfile does not exist')
-            return None, 0, 0
-
 
     tRNA_length = process_rna_type('tRNA')
     mRNA_length = process_rna_type('mRNA')
