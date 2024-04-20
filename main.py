@@ -51,12 +51,11 @@ if __name__ == "__main__":
                 file_id = str(file).split('_')
                 file_id[0] = file_id[0] + '_' + file_id[1]
                 file_id = [file_id[0], file_id[4]]  # sample + type extracted
-                print(file)
-                print(file_id)
                 # if no list there create one to allow append
                 if not (file_id[0] in samples.keys()): samples[file_id[0]] = {}
                 if not (file_id[1] in samples[file_id[0]].keys()): samples[file_id[0]][file_id[1]] = []
                 list(samples[file_id[0]][file_id[1]]).append(file)
+                print(samples[file_id[0]][file_id[1]])
                 types[file_id[1]].append(file)
 
             os.chdir(args.tools_dir + tool)
