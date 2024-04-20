@@ -134,7 +134,7 @@ def compute_stats(tool_name, sample_name, sample, mRNA_basepairs, tRNA_basepairs
 
     mRNA_total = len(sample['mRNA'])
     tRNA_total = len(sample['tRNA'])
-    overlap_count = get_overlaps(sample['mRNA'], sample['tRNA'])
+    overlap_count = len(get_overlaps(sample['mRNA'], sample['tRNA']))
 
     print(overlap_count)
     print(mRNA_total)

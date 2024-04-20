@@ -55,7 +55,6 @@ if __name__ == "__main__":
                 if not (file_id[0] in samples.keys()): samples[file_id[0]] = {}
                 if not (file_id[1] in samples[file_id[0]].keys()): samples[file_id[0]][file_id[1]] = []
                 samples[file_id[0]][file_id[1]].append(file)
-                print(samples[file_id[0]][file_id[1]])
                 types[file_id[1]].append(file)
 
             os.chdir(args.tools_dir + tool)
