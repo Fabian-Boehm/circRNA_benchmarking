@@ -46,8 +46,6 @@ def list_directories(path):
         else:
             print
             '{}\t.bed file does not exist'.format(path + directory)
-
-    print valid_directories
     return valid_directories
 
 
@@ -125,6 +123,7 @@ def get_summed_location_and_length(hashpair, written_basepairs):
         rna_list = []
         rna_length = 0
         for name in dict(hashpair)[rna_type]:
+            print(os.getcwd())
             rna_list += read_file_to_array('{}/{}.annotation.bed'.format(name, name))
             rna_length += written_basepairs[name]
         hashpair[rna_type] = rna_list
