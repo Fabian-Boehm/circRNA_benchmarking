@@ -76,6 +76,9 @@ def create_out_directory(directory_path, tool_list, modules):
         if '0' in modules:
             os.makedirs('./tool_stats')
             os.makedirs('./sample_stats')
+    except OSError as e:
+        traceback.print_exc()
+    try:
         if '1' in modules:
             os.makedirs('./tool_plots')
             os.makedirs('./sample_plots')

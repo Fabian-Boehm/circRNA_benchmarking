@@ -22,6 +22,14 @@ if __name__ == "__main__":
     parser.add_argument('--trimgalore_dir',
                         default='/nfs/data3/CIRCEST/runs/benchmarking/results/trimgalore',
                         type=str, help='path to directory with trimgalore reports')
+    parser.add_argument('--sample_fields',
+                        default='0,1',
+                        type=str, help='comma separated field indicees of the "_" separeted filename, that define sample affiliation')
+
+    parser.add_argument('--type_field',
+                        default='4',
+                        type=int,
+                        help='field indice of the "_" separeted filename, that defines rna type')
 
     parser.add_argument('--module',
                         default='01',
@@ -30,55 +38,67 @@ if __name__ == "__main__":
 
 
     def main():
+        sample_fields = str(args.sample_fields).split(',')
+        sample_fields.sort()
         tool_out_path = os.path.abspath(args.tools_dir)
         trimgalore_path = os.path.abspath(args.trimgalore_dir)
         out_path = os.path.abspath(args.out_dir)
         tool_list = str(args.tool_list).strip().split(',')
         utils.create_out_directory(out_path, tool_list, args.module)
 
-        for tool in tool_list:
-            print(tool)
-            filenames = utils.list_directories(args.tools_dir + tool)
-            filenames.sort()
-            written_basepairs_map = utils.get_written_basepair_map(filenames, args.trimgalore_dir)
+        #stat computation:
+        if '0' in args.module:
+            for tool in tool_list:
+                print(tool)
+                filenames = utils.list_directories(args.tools_dir + tool)
+                filenames.sort()
+                written_basepairs_map = utils.get_written_basepair_map(filenames, args.trimgalore_dir)
 
-            sample_id = ''  # field 0,1
-            type = ''  # field 4 (3 after compression)
-            samples = {}  # 1. Sample_name, 2. m/tRNA, 3.filelist
-            types = {}
-            types['mRNA'] = []
-            types['tRNA'] = []
-            for file in filenames:
-                file_id = str(file).split('_')
-                file_id[0] = file_id[0] + '_' + file_id[1]
-                file_id = [file_id[0], file_id[4]]  # sample + type extracted
-                # if no list there create one to allow append
-                if not (file_id[0] in samples.keys()): samples[file_id[0]] = {}
-                if not (file_id[1] in samples[file_id[0]].keys()): samples[file_id[0]][file_id[1]] = []
-                samples[file_id[0]][file_id[1]].append(file)
-                types[file_id[1]].append(file)
+                sample_id = ''  # field 0,1
+                type = ''  # field 4 (3 after compression)
+                samples = {}  # 1. Sample_name, 2. m/tRNA, 3.filelist
+                types = {}
+                types['mRNA'] = []
+                types['tRNA'] = []
+                for file in filenames:
+                    file_id = str(file).split('_')
+                    sample_name = ''
+                    for f in sample_fields: sample_name += '_' + file_id[f]
+                    sample_name = sample_name[1:]
+                    file_id = [sample_name, file_id[args.type_field]]  # sample + type extracted
 
-            print('Data read')
+                    # if no list there create one to allow append
+                    if not (file_id[0] in samples.keys()): samples[file_id[0]] = {}
+                    if not (file_id[1] in samples[file_id[0]].keys()): samples[file_id[0]][file_id[1]] = []
+                    samples[file_id[0]][file_id[1]].append(file)
+                    types[file_id[1]].append(file)
 
-            os.chdir(args.tools_dir + tool)
-            # get Summed array
-            # type
-            types, types_tRNA_length, types_mRNA_length = utils.get_summed_location_and_length(types,
-                                                                                               written_basepairs_map)
-            # sample
+                print('Data read')
 
-            sample_basepairs_dict = {}
-            for sample in sorted(samples.keys()):
-                sample_basepairs_dict[sample] = {}
                 os.chdir(args.tools_dir + tool)
-                samples[sample], sample_basepairs_dict[sample]['tRNA'], sample_basepairs_dict[sample]['mRNA'] \
-                    = utils.get_summed_location_and_length(samples[sample], written_basepairs_map)
-                utils.compute_stats(tool, sample, samples[sample], sample_basepairs_dict[sample]['mRNA'],
-                                    sample_basepairs_dict[sample]['tRNA'], out_path + '/sample_stats')
-                print(sample + '\tfinished')
-            utils.compute_stats(tool, tool, types, types_mRNA_length, types_tRNA_length, out_path + '/tool_stats')
-            print ('tool_stats finished')
+                # get Summed array
+                # type
+                types, types_tRNA_length, types_mRNA_length = utils.get_summed_location_and_length(types,
+                                                                                                   written_basepairs_map)
+                # sample
 
+                sample_basepairs_dict = {}
+                for sample in sorted(samples.keys()):
+                    sample_basepairs_dict[sample] = {}
+                    os.chdir(args.tools_dir + tool)
+                    samples[sample], sample_basepairs_dict[sample]['tRNA'], sample_basepairs_dict[sample]['mRNA'] \
+                        = utils.get_summed_location_and_length(samples[sample], written_basepairs_map)
+                    utils.compute_stats(tool, sample, samples[sample], sample_basepairs_dict[sample]['mRNA'],
+                                        sample_basepairs_dict[sample]['tRNA'], out_path + '/sample_stats')
+                    print(sample + '\tfinished')
+                utils.compute_stats(tool, tool, types, types_mRNA_length, types_tRNA_length, out_path + '/tool_stats')
+                print ('tool_stats finished')
+
+
+        #plot creation
+        if '0' in args.module:
+            print()
+            #TODO plots
 
     # utils.tool_comparison(args.tool_list, filepath_list, out, args.work_dir, args.trimgalore)
 
