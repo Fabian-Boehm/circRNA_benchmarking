@@ -2,6 +2,7 @@ import plotnine
 import utils
 import matplotlib.pyplot as plt
 import os
+import numpy as np
 
 
 def get_stat(statnumber, filename):
@@ -45,6 +46,37 @@ def labeled_scatterplot(x, y, labels, title='Scatter Plot', xlabel='X-axis', yla
     plt.clf()
 
 
+def deviation_bar_chart(values, labels, base_value, title):
+    """
+    Plots a deviation bar chart.
+
+    Parameters:
+    - values: list of numerical values
+    - labels: list of labels corresponding to the values
+    - base_value: the base value for deviation comparison
+    """
+    deviations = [v - base_value for v in values]
+
+    fig, ax = plt.subplots()
+    ax.bar(labels, deviations, color=['green' if x >= 0 else 'red' for x in deviations])
+
+    # Add a line for the base value
+    ax.axhline(0, color='black', linewidth=0.8)
+
+    std_dev = np.std(values)
+    ax.axhline(std_dev, color='blue', linestyle='--', label='Std. Deviation +')
+    ax.axhline(-std_dev, color='blue', linestyle='--', label='Std. Deviation -')
+
+
+    ax.set_ylabel('Deviation from Base Value')
+    ax.set_title('Deviation Bar Chart')
+    plt.legend()
+    plt.grid(True)
+    filename = title.replace(':', '').replace('/', '').strip()
+    plt.savefig('{}.jpg'.format(filename))
+    plt.clf()
+
+
 def tool_comparison_histogram(statnumber, directory, out_dir):
     os.chdir(directory)
 
@@ -82,3 +114,15 @@ def tool_comparison_scatterplot(statnumber1, statnumber2, directory, out_dir):
     os.chdir(out_dir)
     labeled_scatterplot(x=x, y=y, xlabel=xlabel, ylabel=ylabel, labels=labels,
                         title='{}_vs_{}'.format(xlabel, ylabel).replace(':', '').replace('/', '').strip())
+
+def sample_deviation_barplot (statnumber, samplesfile, tool_statfile,out_dir):
+    toolname = str(tool_statfile).split('/').pop()
+    toolname = toolname.split('.')[0]
+    stat_name, basevalue = get_stat(statnumber, tool_statfile)
+    title = toolname + "_" + stat_name + '_all_samples'
+
+    _, samples = get_stat(0, samplesfile)
+    _, values = get_stat(statnumber,samplesfile)
+
+    os.chdir(out_dir)
+    deviation_bar_chart(values,samples,basevalue,title)
