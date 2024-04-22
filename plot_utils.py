@@ -25,6 +25,7 @@ def get_stat(statnumber, filename):
 def one_stat_histogramm(labels, values, title):
     plt.bar(range(len(labels)), values)  # Creating a bar graph
     plt.title(title)  # Setting the title
+    plt.yscale('linear')
     filename = title.replace(':', '').replace('/', '').strip()
     plt.xticks(range(len(labels)), labels)  # Setting x-axis labels
     plt.xticks(rotation=15)
@@ -47,33 +48,27 @@ def labeled_scatterplot(x, y, labels, title='Scatter Plot', xlabel='X-axis', yla
     plt.clf()
 
 
-def grouped_deviation_scatterplot_with_std(data, category_labels, base_value,title, ax=None):
-    """
-    Plots a grouped deviation scatterplot with standard deviations,
-    showing how data points deviate from a base value.
-
-    Parameters:
-    - data: list of lists, each containing numerical data for a group
-    - category_labels: labels for each group
-    - base_value: central value to calculate deviations from
-    - ax: matplotlib axis object to draw on
-    """
+def grouped_deviation_scatterplot_with_std(data, category_labels, base_value, title, ax=None):
     if ax is None:
         fig, ax = plt.subplots()
 
     for idx, group in enumerate(data):
-        deviations = np.array(group) - base_value
-        x_values = np.random.normal(idx + 1, 0.04, size=len(deviations))  # Adding jitter for better visibility
+        # Convert group to numpy array of floats
+        numeric_group = np.array(group, dtype=float)
+        # Ensure base_value is also a float
+        numeric_base_value = float(base_value)
+
+        deviations = numeric_group - numeric_base_value
+        x_values = np.random.normal(idx + 1, 0.04, size=len(deviations))
         ax.scatter(x_values, deviations, label=category_labels[idx])
 
-        # Calculate and plot standard deviation lines for each group
         std_dev = np.std(deviations)
         ax.axhline(y=np.mean(deviations) + std_dev, color='red', linestyle='--', linewidth=0.5,
                    xmin=(idx + 0.75) / len(data), xmax=(idx + 1.25) / len(data))
         ax.axhline(y=np.mean(deviations) - std_dev, color='red', linestyle='--', linewidth=0.5,
                    xmin=(idx + 0.75) / len(data), xmax=(idx + 1.25) / len(data))
 
-    ax.axhline(0, color='black', linewidth=1)  # Line indicating the base value
+    ax.axhline(0, color='black', linewidth=1)
     ax.set_xticks(range(1, len(category_labels) + 1))
     ax.set_xticklabels(category_labels)
     ax.set_ylabel('Deviation from tool value')
@@ -95,7 +90,7 @@ def tool_comparison_histogram(statnumber, directory, out_dir):
     for file in os.listdir():
         labels.append(file.split('.')[0])
         stat_name, statvalue = get_stat(statnumber, file)
-        values.append(statvalue[0])
+        values.append(float(statvalue[0].strip()))
         title = stat_name
 
     os.chdir(out_dir)
@@ -110,14 +105,13 @@ def tool_comparison_scatterplot(statnumber1, statnumber2, directory, out_dir):
     labels = []
     x = []
     y = []
-    title = 'Plotname'
 
     for file in os.listdir():
         labels.append(file.split('.')[0])
         xlabel, statvalue = get_stat(statnumber1, file)
-        x.append(statvalue[0])
+        x.append(float(statvalue[0].strip()))
         ylabel, statvalue = get_stat(statnumber2, file)
-        y.append(statvalue[0])
+        y.append(float(statvalue[0].strip()))
 
     os.chdir(out_dir)
     labeled_scatterplot(x=x, y=y, xlabel=xlabel, ylabel=ylabel, labels=labels,

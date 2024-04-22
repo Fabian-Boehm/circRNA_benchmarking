@@ -97,10 +97,10 @@ if __name__ == "__main__":
                 print('tool_stats finished')
 
         # plot creation
-        if '0' in args.module:
+        if '1' in args.module:
             # barplots
-            toolstat_dir = args.out_dir + 'tool_stats'
-            out_dir = args.out_dir + 'tool_plots'
+            toolstat_dir = os.path.join(args.out_dir, 'tool_stats')
+            out_dir = os.path.join(args.out_dir, 'tool_plots')
             plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=5)
             plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=6)
             plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=7)
@@ -116,18 +116,20 @@ if __name__ == "__main__":
             plot_utils.tool_comparison_scatterplot(statnumber1=6, statnumber2=8, directory=toolstat_dir,
                                                    out_dir=out_dir)
 
-            #deviation plots
-            out_dir = args.out_dir + 'sample_plots'
-            samplestats_dir = args.out_dir + 'sample_stats'
+            # deviation plots
+            out_dir = os.path.join(args.out_dir, 'sample_plots')
+            samplestats_dir = os.path.join(args.out_dir, 'sample_stats')
             files_and_dirs = os.listdir(samplestats_dir)
             filenames = [os.path.basename(f) for f in files_and_dirs]
-            statlist = [0,1]
+            statlist = [0, 1]
 
             for file in filenames:
-                sample_file = samplestats_dir + file
-                tool_file = toolstat_dir + file
+                sample_file = os.path.join(samplestats_dir, file)
+                tool_file = os.path.join(toolstat_dir, file)
                 for stat in statlist:
-                    plot_utils.sample_deviation_barplot(stat,sample_file,tool_file,out_dir)
+                    print(tool_file)
+                    plot_utils.sample_deviation_barplot(stat, sample_file, tool_file, out_dir)
+
 
     # utils.tool_comparison(args.tool_list, filepath_list, out, args.work_dir, args.trimgalore)
 
