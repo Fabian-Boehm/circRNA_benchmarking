@@ -3,6 +3,7 @@ import utils
 import matplotlib.pyplot as plt
 import os
 import numpy as np
+import seaborn as sns
 
 
 def get_stat(statnumber, filename):
@@ -46,32 +47,39 @@ def labeled_scatterplot(x, y, labels, title='Scatter Plot', xlabel='X-axis', yla
     plt.clf()
 
 
-def deviation_bar_chart(values, labels, base_value, title):
+def grouped_deviation_scatterplot_with_std(data, category_labels, base_value,title, ax=None):
     """
-    Plots a deviation bar chart.
+    Plots a grouped deviation scatterplot with standard deviations,
+    showing how data points deviate from a base value.
 
     Parameters:
-    - values: list of numerical values
-    - labels: list of labels corresponding to the values
-    - base_value: the base value for deviation comparison
+    - data: list of lists, each containing numerical data for a group
+    - category_labels: labels for each group
+    - base_value: central value to calculate deviations from
+    - ax: matplotlib axis object to draw on
     """
-    deviations = [v - base_value for v in values]
+    if ax is None:
+        fig, ax = plt.subplots()
 
-    fig, ax = plt.subplots()
-    ax.bar(labels, deviations, color=['green' if x >= 0 else 'red' for x in deviations])
+    for idx, group in enumerate(data):
+        deviations = np.array(group) - base_value
+        x_values = np.random.normal(idx + 1, 0.04, size=len(deviations))  # Adding jitter for better visibility
+        ax.scatter(x_values, deviations, label=category_labels[idx])
 
-    # Add a line for the base value
-    ax.axhline(0, color='black', linewidth=0.8)
+        # Calculate and plot standard deviation lines for each group
+        std_dev = np.std(deviations)
+        ax.axhline(y=np.mean(deviations) + std_dev, color='red', linestyle='--', linewidth=0.5,
+                   xmin=(idx + 0.75) / len(data), xmax=(idx + 1.25) / len(data))
+        ax.axhline(y=np.mean(deviations) - std_dev, color='red', linestyle='--', linewidth=0.5,
+                   xmin=(idx + 0.75) / len(data), xmax=(idx + 1.25) / len(data))
 
-    std_dev = np.std(values)
-    ax.axhline(std_dev, color='blue', linestyle='--', label='Std. Deviation +')
-    ax.axhline(-std_dev, color='blue', linestyle='--', label='Std. Deviation -')
-
-
-    ax.set_ylabel('Deviation from Base Value')
-    ax.set_title('Deviation Bar Chart')
+    ax.axhline(0, color='black', linewidth=1)  # Line indicating the base value
+    ax.set_xticks(range(1, len(category_labels) + 1))
+    ax.set_xticklabels(category_labels)
+    ax.set_ylabel('Deviation from tool value')
+    ax.set_title(title)
+    ax.grid(True)
     plt.legend()
-    plt.grid(True)
     filename = title.replace(':', '').replace('/', '').strip()
     plt.savefig('{}.jpg'.format(filename))
     plt.clf()
@@ -115,14 +123,15 @@ def tool_comparison_scatterplot(statnumber1, statnumber2, directory, out_dir):
     labeled_scatterplot(x=x, y=y, xlabel=xlabel, ylabel=ylabel, labels=labels,
                         title='{}_vs_{}'.format(xlabel, ylabel).replace(':', '').replace('/', '').strip())
 
-def sample_deviation_barplot (statnumber, samplesfile, tool_statfile,out_dir):
+
+def sample_deviation_barplot(statnumber, samplesfile, tool_statfile, out_dir):
     toolname = str(tool_statfile).split('/').pop()
     toolname = toolname.split('.')[0]
     stat_name, basevalue = get_stat(statnumber, tool_statfile)
     title = toolname + "_" + stat_name + '_all_samples'
 
     _, samples = get_stat(0, samplesfile)
-    _, values = get_stat(statnumber,samplesfile)
+    _, values = get_stat(statnumber, samplesfile)
 
     os.chdir(out_dir)
-    deviation_bar_chart(values,samples,basevalue,title)
+    grouped_deviation_scatterplot_with_std(values, samples, basevalue, title)

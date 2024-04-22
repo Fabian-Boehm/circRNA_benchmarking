@@ -1,9 +1,10 @@
 from __future__ import print_function
 import utils
+import plot_utils
 import os
 import argparse
 
-#TODO: samples don't get saved coorectly
+# TODO: samples don't get saved coorectly
 
 if __name__ == "__main__":
     # Arguments
@@ -24,7 +25,8 @@ if __name__ == "__main__":
                         type=str, help='path to directory with trimgalore reports')
     parser.add_argument('--sample_fields',
                         default='0,1',
-                        type=str, help='comma separated field indicees of the "_" separeted filename, that define sample affiliation')
+                        type=str,
+                        help='comma separated field indicees of the "_" separeted filename, that define sample affiliation')
 
     parser.add_argument('--type_field',
                         default='4',
@@ -46,7 +48,7 @@ if __name__ == "__main__":
         tool_list = str(args.tool_list).strip().split(',')
         utils.create_out_directory(out_path, tool_list, args.module)
 
-        #stat computation:
+        # stat computation:
         if '0' in args.module:
             for tool in tool_list:
                 print(tool)
@@ -92,17 +94,62 @@ if __name__ == "__main__":
                                         sample_basepairs_dict[sample]['tRNA'], out_path + '/sample_stats')
                     print(sample + '\tfinished')
                 utils.compute_stats(tool, tool, types, types_mRNA_length, types_tRNA_length, out_path + '/tool_stats')
-                print ('tool_stats finished')
+                print('tool_stats finished')
 
-
-        #plot creation
+        # plot creation
         if '0' in args.module:
-            print()
-            #TODO plots
+            # barplots
+            toolstat_dir = args.out_dir + 'tool_stats'
+            out_dir = args.out_dir + 'tool_plots'
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=5)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=6)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=7)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=8)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=9)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=10)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=11)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=12)
+
+            # scatterplots
+            plot_utils.tool_comparison_scatterplot(statnumber1=5, statnumber2=7, directory=toolstat_dir,
+                                                   out_dir=out_dir)
+            plot_utils.tool_comparison_scatterplot(statnumber1=6, statnumber2=8, directory=toolstat_dir,
+                                                   out_dir=out_dir)
+
+            #deviation plots
+            out_dir = args.out_dir + 'sample_plots'
+            samplestats_dir = args.out_dir + 'sample_stats'
+            files_and_dirs = os.listdir(samplestats_dir)
+            filenames = [os.path.basename(f) for f in files_and_dirs]
+            statlist = [0,1]
+
+            for file in filenames:
+                sample_file = samplestats_dir + file
+                tool_file = toolstat_dir + file
+                for stat in statlist:
+                    plot_utils.sample_deviation_barplot(stat,sample_file,tool_file,out_dir)
 
     # utils.tool_comparison(args.tool_list, filepath_list, out, args.work_dir, args.trimgalore)
 
     # for i in filenames: bed_filenames.append('{}/{}.annotation.bed'.format(i, i))
+
+    """
+0    #	circexplorer2
+1   mRNA_basepairs	188217468380
+2   tRNA_basepairs	200589554830
+3    mRNA_total	2217
+4    mRNA_total_normalized	0.235578559108
+5    tRNA_total	208969
+6    tRNA_total_normalized	20.8354817056
+7    total_proportions	0.0106092291201
+8    total_proportions_normalized	0.011306604879
+9    overlap_count	0
+10    jaccard_index	0
+11    mRNA_overlap_percentage	0
+12    mRNA_overlap_percentage_normalized	0
+13    tRNA_overlap_percentage	0
+14    tRNA_overlap_percentage_normalized	0
+    """
 
     main()
     print('execution finished')

@@ -77,16 +77,14 @@ def create_out_directory(directory_path, tool_list, modules):
             os.makedirs('./tool_stats')
             os.makedirs('./sample_stats')
     except OSError as e:
-        traceback.print_exc()
+        print('directories not successfully created')
     try:
         if '1' in modules:
             os.makedirs('./tool_plots')
             os.makedirs('./sample_plots')
             os.chdir('./sample_plots')
-            os.makedirs('./total')
-            for tool in tool_list: os.makedirs('./' + tool)
     except OSError as e:
-        traceback.print_exc()
+        print('directories not successfully created')
 
 
 def get_written_basepair_map(filenames, trimgalore_path):
