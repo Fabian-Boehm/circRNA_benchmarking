@@ -49,7 +49,7 @@ if __name__ == "__main__":
         if '0' in args.module:
             for tool in tool_list:
                 print(tool)
-                filenames = utils.list_directories(args.tools_dir + tool)
+                filenames = utils.list_directories(os.path.join(args.tools_dir, tool))
                 filenames.sort()
                 written_basepairs_map = utils.get_written_basepair_map(filenames, args.trimgalore_dir)
 
