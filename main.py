@@ -46,6 +46,9 @@ if __name__ == "__main__":
         out_path = os.path.abspath(args.out_dir)
         tool_list = str(args.tool_list).strip().split(',')
         utils.create_out_directory(out_path, tool_list, args.module)
+        if len(args.tool_list) == 1:
+            tool_list = args.tool_list
+
 
         # stat computation:
         if '0' in args.module:
