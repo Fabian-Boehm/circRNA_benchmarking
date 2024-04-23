@@ -48,35 +48,28 @@ def labeled_scatterplot(x, y, labels, title='Scatter Plot', xlabel='X-axis', yla
     plt.clf()
 
 
-def grouped_deviation_scatterplot_with_std(data, category_labels, base_value, title, ax=None):
+def grouped_absolute_scatterplot_with_individual_bases(data, category_labels, base_values, data_point_labels, title, ax=None):
     if ax is None:
         fig, ax = plt.subplots()
 
-    for idx, group in enumerate(data):
-        # Convert group to numpy array of floats
-        numeric_group = np.array(group, dtype=float)
-        # Ensure base_value is also a float
-        numeric_base_value = float(base_value)
+    for idx, (group, labels) in enumerate(zip(data, data_point_labels)):
+        x_values = np.random.normal(idx + 1, 0.04, size=len(group))  # Adding jitter for better visibility
+        ax.scatter(x_values, group, label=category_labels[idx])
 
-        deviations = numeric_group - numeric_base_value
-        x_values = np.random.normal(idx + 1, 0.04, size=len(deviations))
-        ax.scatter(x_values, deviations, label=category_labels[idx])
+        # Plot a base value line for the current group
+        ax.axhline(y=base_values[idx], color='black', linestyle='--', linewidth=1, xmin=(idx + 0.75) / len(data), xmax=(idx + 1.25) / len(data))
 
-        std_dev = np.std(deviations)
-        ax.axhline(y=np.mean(deviations) + std_dev, color='red', linestyle='--', linewidth=0.5,
-                   xmin=(idx + 0.75) / len(data), xmax=(idx + 1.25) / len(data))
-        ax.axhline(y=np.mean(deviations) - std_dev, color='red', linestyle='--', linewidth=0.5,
-                   xmin=(idx + 0.75) / len(data), xmax=(idx + 1.25) / len(data))
+        # Label each point with its custom label
+        for x, y, label in zip(x_values, group, labels):
+            ax.text(x, y, f'{label} ({y:.2f})', color='black', fontsize=8, ha='center')
 
-    ax.axhline(0, color='black', linewidth=1)
     ax.set_xticks(range(1, len(category_labels) + 1))
     ax.set_xticklabels(category_labels)
-    ax.set_ylabel('Deviation from tool value')
     ax.set_title(title)
-    ax.grid(True)
     plt.legend()
+    plt.yscale('linear')
     filename = title.replace(':', '').replace('/', '').strip()
-    plt.savefig('{}.jpg'.format(filename))
+    plt.savefig(f'{filename}.jpg')
     plt.clf()
 
 
@@ -118,14 +111,26 @@ def tool_comparison_scatterplot(statnumber1, statnumber2, directory, out_dir):
                         title='{}_vs_{}'.format(xlabel, ylabel).replace(':', '').replace('/', '').strip())
 
 
-def sample_deviation_barplot(statnumber, samplesfile, tool_statfile, out_dir):
-    toolname = str(tool_statfile).split('/').pop()
-    toolname = toolname.split('.')[0]
-    stat_name, basevalue = get_stat(statnumber, tool_statfile)
-    title = toolname + "_" + stat_name + '_all_samples'
+def sample_deviation_barplot(statnumber, sample_dir, tool_dir, out_dir):
+    tool_files = os.listdir(tool_dir)
+    tool_names = [os.path.splitext(file)[0] for file in tool_files]
+    data = []
+    labels = []
+    basevalues = []
 
-    _, samples = get_stat(0, samplesfile)
-    _, values = get_stat(statnumber, samplesfile)
+    for filename in tool_files:
+        sample_file = os.path.join(sample_dir,filename)
+        tool_file = os.path.join(tool_dir,filename)
+        stat_name, basevalue = get_stat(statnumber, tool_file)
+        basevalues.append(float(basevalue[0].strip()))
 
+        _, samples = get_stat(0, sample_file)
+        labels.append(samples)
+        _, values = get_stat(statnumber, sample_file)
+        values = [float(value.strip()) for value in values]
+        data.append(values)
+
+
+    title = stat_name + '_all_samples'
     os.chdir(out_dir)
-    grouped_deviation_scatterplot_with_std(values, samples, basevalue, title)
+    grouped_absolute_scatterplot_with_individual_bases(data,tool_names,basevalues,labels,title)

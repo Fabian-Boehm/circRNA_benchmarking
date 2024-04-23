@@ -70,9 +70,9 @@ def get_stat_from_stats(statfile_array, statnumber):
 
 
 def create_out_directory(directory_path, tool_list, modules):
+    os.makedirs(directory_path)
+    os.chdir(directory_path)
     try:
-        os.makedirs(directory_path)
-        os.chdir(directory_path)
         if '0' in modules:
             os.makedirs('./tool_stats')
             os.makedirs('./sample_stats')

@@ -119,16 +119,10 @@ if __name__ == "__main__":
             # deviation plots
             out_dir = os.path.join(args.out_dir, 'sample_plots')
             samplestats_dir = os.path.join(args.out_dir, 'sample_stats')
-            files_and_dirs = os.listdir(samplestats_dir)
-            filenames = [os.path.basename(f) for f in files_and_dirs]
-            statlist = [0, 1]
+            statlist = [4,6,7,8,9,10,11,12]
 
-            for file in filenames:
-                sample_file = os.path.join(samplestats_dir, file)
-                tool_file = os.path.join(toolstat_dir, file)
-                for stat in statlist:
-                    print(tool_file)
-                    plot_utils.sample_deviation_barplot(stat, sample_file, tool_file, out_dir)
+            for stat in statlist:
+                plot_utils.sample_deviation_barplot(stat, samplestats_dir, toolstat_dir, out_dir)
 
 
     # utils.tool_comparison(args.tool_list, filepath_list, out, args.work_dir, args.trimgalore)
