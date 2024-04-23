@@ -41,7 +41,8 @@ if __name__ == "__main__":
         c = 0
         while c < len(sample_fields):
             sample_fields[c] = int(sample_fields[c])
-             c += 1
+            c += 1
+
         sample_fields.sort()
         out_path = os.path.abspath(args.out_dir)
         tool_list = str(args.tool_list).strip().split(',')
