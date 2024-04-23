@@ -42,12 +42,13 @@ if __name__ == "__main__":
         tool_out_path = os.path.abspath(args.tools_dir)
         trimgalore_path = os.path.abspath(args.trimgalore_dir)
         out_path = os.path.abspath(args.out_dir)
+        print(args.tool_list)
         tool_list = str(args.tool_list).strip().split(',')
+        print(tool_list)
         utils.create_out_directory(out_path, tool_list, args.module)
 
         # stat computation:
         if '0' in args.module:
-            print(args.tool_list)
             for tool in args.tool_list:
                 print(tool)
                 filenames = utils.list_directories(os.path.join(args.tools_dir, tool))
