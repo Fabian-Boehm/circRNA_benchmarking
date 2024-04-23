@@ -36,6 +36,8 @@ def list_directories(path):
     # Ensure the path ends with a slash
     path = path.rstrip('/') + '/'
     # List comprehension to get all directories at the given path
+    print(os.listdir(path))
+    print(path)
     directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
     # Create a new list to store directories with matching .annotation.bed files
