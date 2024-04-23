@@ -1,7 +1,9 @@
 from __future__ import print_function
 import utils
+import plot_utils
 import os
 import argparse
+
 
 if __name__ == "__main__":
     # Arguments
@@ -93,8 +95,38 @@ if __name__ == "__main__":
                 utils.compute_stats(tool, tool, types, types_mRNA_length, types_tRNA_length, out_path + '/tool_stats')
                 print('tool_stats finished')
 
+        # plot creation
+        if '1' in args.module:
+            # barplots
+            toolstat_dir = os.path.join(args.out_dir, 'tool_stats')
+            out_dir = os.path.join(args.out_dir, 'tool_plots')
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=5)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=6)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=7)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=8)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=9)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=10)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=11)
+            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=12)
+
+            # scatterplots
+            plot_utils.tool_comparison_scatterplot(statnumber1=5, statnumber2=7, directory=toolstat_dir,
+                                                   out_dir=out_dir)
+            plot_utils.tool_comparison_scatterplot(statnumber1=6, statnumber2=8, directory=toolstat_dir,
+                                                   out_dir=out_dir)
+
+            # deviation plots
+            out_dir = os.path.join(args.out_dir, 'sample_plots')
+            samplestats_dir = os.path.join(args.out_dir, 'sample_stats')
+            statlist = [4,6,7,8,9,10,11,12]
+
+            for stat in statlist:
+                plot_utils.sample_deviation_barplot(stat, samplestats_dir, toolstat_dir, out_dir)
 
 
+    # utils.tool_comparison(args.tool_list, filepath_list, out, args.work_dir, args.trimgalore)
+
+    # for i in filenames: bed_filenames.append('{}/{}.annotation.bed'.format(i, i))
 
     """
 0    #	circexplorer2
