@@ -38,6 +38,8 @@ if __name__ == "__main__":
 
     def main():
         sample_fields = str(args.sample_fields).split(',')
+        c = 0
+        while c < len(sample_fields): sample_fields[c] = int(sample_fields[c])
         sample_fields.sort()
         out_path = os.path.abspath(args.out_dir)
         tool_list = str(args.tool_list).strip().split(',')
@@ -61,6 +63,7 @@ if __name__ == "__main__":
                     sample_name = ''
                     print(sample_fields)
                     print(file_id)
+
                     for f in sample_fields: sample_name += '_' + file_id[f]
                     sample_name = sample_name[1:]
                     file_id = [sample_name, file_id[args.type_field]]  # sample + type extracted
@@ -91,8 +94,6 @@ if __name__ == "__main__":
                     print(sample + '\tfinished')
                 utils.compute_stats(tool, tool, types, types_mRNA_length, types_tRNA_length, out_path + '/tool_stats')
                 print('tool_stats finished')
-
-
 
 
     """
