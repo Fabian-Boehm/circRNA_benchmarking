@@ -66,7 +66,6 @@ def grouped_absolute_scatterplot_with_individual_bases(data, category_labels, ba
     ax.set_xticks(range(1, len(category_labels) + 1))
     ax.set_xticklabels(category_labels)
     ax.set_title(title)
-    plt.legend()
     plt.yscale('linear')
     filename = title.replace(':', '').replace('/', '').strip()
     plt.savefig(f'{filename}.jpg')

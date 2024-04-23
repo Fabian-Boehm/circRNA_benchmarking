@@ -164,8 +164,14 @@ def compute_stats(tool_name, sample_name, sample, mRNA_basepairs, tRNA_basepairs
     total_proportions = (mRNA_total * 1.0) / tRNA_total
     total_proportions_normalized = mRNA_total_normalized / tRNA_total_normalized
 
+
     union = mRNA_total + tRNA_total - overlap_count  # not a stat
     jaccard_index = overlap_count / union if union != 0 else 0
+    print(mRNA_total)
+    print(tRNA_total)
+    print(overlap_count)
+    print(union)
+    print (jaccard_index)
 
     # filewriting
 

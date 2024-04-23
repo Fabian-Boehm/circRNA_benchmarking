@@ -42,7 +42,6 @@ if __name__ == "__main__":
         while c < len(sample_fields):
             sample_fields[c] = int(sample_fields[c])
             c += 1
-
         sample_fields.sort()
         out_path = os.path.abspath(args.out_dir)
         tool_list = str(args.tool_list).strip().split(',')
@@ -64,8 +63,6 @@ if __name__ == "__main__":
                 for file in filenames:
                     file_id = str(file).split('_')
                     sample_name = ''
-                    print(sample_fields)
-                    print(file_id)
 
                     for f in sample_fields: sample_name += '_' + file_id[f]
                     sample_name = sample_name[1:]
