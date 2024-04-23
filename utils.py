@@ -153,17 +153,16 @@ def compute_stats(tool_name, sample_name, sample, mRNA_basepairs, tRNA_basepairs
     tRNA_total = len(sample['tRNA'])
     overlap_count = len(get_overlaps(sample['mRNA'], sample['tRNA']))
 
-    mRNA_overlap_percentage = overlap_count / mRNA_total
-    tRNA_overlap_percentage = overlap_count / tRNA_total
+    mRNA_overlap_percentage = float(overlap_count) / mRNA_total
+    tRNA_overlap_percentage = float(overlap_count) / tRNA_total
 
-    mRNA_total_normalized = mRNA_total / (normalisation_factor * mRNA_basepairs)  # overlap coefficient
-    tRNA_total_normalized = tRNA_total / (normalisation_factor * tRNA_basepairs)
-    mRNA_overlap_percentage_normalized = mRNA_overlap_percentage / mRNA_total  # normalized overlap coeficcient
-    tRNA_overlap_percentage_normalized = tRNA_overlap_percentage / tRNA_total
+    mRNA_total_normalized = mRNA_total / (normalisation_factor * float(mRNA_basepairs))  # overlap coefficient
+    tRNA_total_normalized = tRNA_total / (normalisation_factor * float(tRNA_basepairs))
+    mRNA_overlap_percentage_normalized = mRNA_overlap_percentage / float(mRNA_total)  # normalized overlap coefficient
+    tRNA_overlap_percentage_normalized = tRNA_overlap_percentage / float(tRNA_total)
 
-    total_proportions = (mRNA_total * 1.0) / tRNA_total
+    total_proportions = float(mRNA_total) / tRNA_total
     total_proportions_normalized = mRNA_total_normalized / tRNA_total_normalized
-
 
     union = mRNA_total + tRNA_total - overlap_count  # not a stat
     jaccard_index = float(overlap_count) / union if union != 0 else 0

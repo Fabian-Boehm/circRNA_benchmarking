@@ -4,7 +4,6 @@ import plot_utils
 import os
 import argparse
 
-
 if __name__ == "__main__":
     # Arguments
     parser = argparse.ArgumentParser()
@@ -16,12 +15,15 @@ if __name__ == "__main__":
     parser.add_argument('--tools_dir',
                         default='/nfs/data3/CIRCEST/runs/benchmarking/results/circrna_discovery', type=str,
                         help='Directory with the different tool directories')
+
     parser.add_argument('--out_dir',
                         default=r'/nfs/data3/CIRCEST/runs/benchmarking/benchmarking_results',
                         type=str, help='Path to benchmarking results')
+
     parser.add_argument('--trimgalore_dir',
                         default='/nfs/data3/CIRCEST/runs/benchmarking/results/trimgalore',
                         type=str, help='path to directory with trimgalore reports')
+
     parser.add_argument('--sample_fields',
                         default='0,1',
                         type=str,
@@ -120,7 +122,7 @@ if __name__ == "__main__":
             # deviation plots
             out_dir = os.path.join(args.out_dir, 'sample_plots')
             samplestats_dir = os.path.join(args.out_dir, 'sample_stats')
-            statlist = [4,6,7,8,9,10,11,12]
+            statlist = [4, 6, 7, 8, 9, 10, 11, 12]
 
             for stat in statlist:
                 plot_utils.sample_deviation_barplot(stat, samplestats_dir, toolstat_dir, out_dir)
