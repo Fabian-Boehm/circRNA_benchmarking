@@ -60,7 +60,7 @@ if __name__ == "__main__":
                     file_id = str(file).split('_')
                     sample_name = ''
                     print(sample_fields)
-                    frint(file_id)
+                    print(file_id)
                     for f in sample_fields: sample_name += '_' + file_id[f]
                     sample_name = sample_name[1:]
                     file_id = [sample_name, file_id[args.type_field]]  # sample + type extracted
