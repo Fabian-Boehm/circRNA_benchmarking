@@ -47,8 +47,8 @@ if __name__ == "__main__":
 
         # stat computation:
         if '0' in args.module:
-            print(tool_list)
-            for tool in tool_list:
+            print(args.tool_list)
+            for tool in args.tool_list:
                 print(tool)
                 filenames = utils.list_directories(os.path.join(args.tools_dir, tool))
                 filenames.sort()
