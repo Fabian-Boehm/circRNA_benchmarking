@@ -39,18 +39,13 @@ if __name__ == "__main__":
     def main():
         sample_fields = str(args.sample_fields).split(',')
         sample_fields.sort()
-        tool_out_path = os.path.abspath(args.tools_dir)
-        trimgalore_path = os.path.abspath(args.trimgalore_dir)
         out_path = os.path.abspath(args.out_dir)
-        print(args.tool_list)
         tool_list = str(args.tool_list).strip().split(',')
-        print(tool_list)
         utils.create_out_directory(out_path, tool_list, args.module)
 
         # stat computation:
         if '0' in args.module:
             for tool in args.tool_list:
-                print(tool)
                 filenames = utils.list_directories(os.path.join(args.tools_dir, tool))
                 filenames.sort()
                 written_basepairs_map = utils.get_written_basepair_map(filenames, args.trimgalore_dir)
@@ -64,6 +59,8 @@ if __name__ == "__main__":
                 for file in filenames:
                     file_id = str(file).split('_')
                     sample_name = ''
+                    print(sample_fields)
+                    frint(file_id)
                     for f in sample_fields: sample_name += '_' + file_id[f]
                     sample_name = sample_name[1:]
                     file_id = [sample_name, file_id[args.type_field]]  # sample + type extracted
