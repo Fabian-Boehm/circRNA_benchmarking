@@ -46,10 +46,8 @@ if __name__ == "__main__":
             c += 1
         sample_fields.sort()
         out_path = os.path.abspath(args.out_dir)
-        tool_list = str(args.tool_list).strip().split(',')
+        tool_list = args.tool_list[0].strip().split(',')
         utils.create_out_directory(out_path, tool_list, args.module)
-        if len(tool_list) == 1:
-            tool_list = args.tool_list
 
         # stat computation:
         if '0' in args.module:
