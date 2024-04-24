@@ -55,3 +55,21 @@ Running the Script
 To run the script, navigate to the directory containing the script and execute it with the desired parameters. Example command:
 
 python script_name.py --tool_list find_circ,segemehl --tools_dir /path/to/tools --out_dir /path/to/output
+
+
+Output:
+1   mRNA_basepairs: Written basepairs used for circRNA-detection
+2   tRNA_basepairs	Written basepairs used for circRNA-detection
+3    mRNA_total:	Total circRNAs detected
+4    mRNA_total_normalized	Total circRNAs detected divided by mRNA_basepairs and multiplied by 0.00000005
+5    tRNA_total:	    Total circRNAs detected
+6    tRNA_total_normalized:	Total circRNAs detected divided by tRNA_basepairs and multiplied by 0.00000005
+7    total_proportions:	mRNA_total/tRNA_total
+8    total_proportions_normalized:	mRNA_total_normalized/tRNA_total_normalized
+9    overlap_count:	Total count of overlaps between mRNA and tRNA in this sample
+10    jaccard_index:    overlap_count/mRNA_total + tRNA_total - overlap_count
+11    mRNA_overlap_percentage	overlap_count / mRNA_total
+12    mRNA_overlap_percentage_normalized	mRNA_overlap_percentage / mRNA_total
+13    tRNA_overlap_percentage	overlap_count / tRNA_total
+14    tRNA_overlap_percentage_normalized	tRNA_overlap_percentage / tRNA_total
+

@@ -111,7 +111,6 @@ if __name__ == "__main__":
             plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=9)
             plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=10)
             plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=11)
-            plot_utils.tool_comparison_histogram(directory=toolstat_dir, out_dir=out_dir, statnumber=12)
 
             # scatterplots
             plot_utils.tool_comparison_scatterplot(statnumber1=5, statnumber2=7, directory=toolstat_dir,
@@ -122,7 +121,7 @@ if __name__ == "__main__":
             # deviation plots
             out_dir = os.path.join(args.out_dir, 'sample_plots')
             samplestats_dir = os.path.join(args.out_dir, 'sample_stats')
-            statlist = [4, 6, 7, 8, 9, 10, 11, 12]
+            statlist = [4, 6, 7, 8, 9, 10, 11]
 
             for stat in statlist:
                 plot_utils.sample_deviation_barplot(stat, samplestats_dir, toolstat_dir, out_dir)
