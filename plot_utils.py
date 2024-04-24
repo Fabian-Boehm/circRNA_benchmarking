@@ -22,57 +22,20 @@ def get_stat(statnumber, filename):
     return stat_name, out
 
 
-def one_stat_histogramm(labels, values, title):
-    plt.bar(range(len(labels)), values)  # Creating a bar graph
-    plt.title(title)  # Setting the title
-    plt.yscale('linear')
-    filename = title.replace(':', '').replace('/', '').strip()
-    plt.xticks(range(len(labels)), labels)  # Setting x-axis labels
-    plt.xticks(rotation=15)
-    plt.savefig('{}.jpg'.format(filename))  # Saving the plot as an image file
-    plt.clf()
 
-
-def labeled_scatterplot(x, y, labels, title='Scatter Plot', xlabel='X-axis', ylabel='Y-axis'):
-    fig, ax = plt.subplots()
-    ax.scatter(x, y, marker='o', color='blue', alpha=0.6)  # Directly plotting without assignment
-    # Adding labels to each point
-    for i, label in enumerate(labels):
-        ax.annotate(label, (x[i], y[i]))
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    ax.set_title(title)
-    plt.grid(True)
-    filename = title.replace(':', '').replace('/', '').strip()
-    plt.savefig('{}.jpg'.format(filename))
-    plt.clf()
-
-
-def grouped_absolute_scatterplot_with_individual_bases(data, category_labels, base_values, data_point_labels, title, ax=None):
-    if ax is None:
-        fig, ax = plt.subplots()
-
-    for idx, (group, labels) in enumerate(zip(data, data_point_labels)):
-        x_values = np.random.normal(idx + 1, 0.04, size=len(group))  # Adding jitter for better visibility
-        ax.scatter(x_values, group, label=category_labels[idx])
-
-        # Plot a base value line for the current group
-        ax.axhline(y=base_values[idx], color='black', linestyle='--', linewidth=1, xmin=(idx + 0.75) / len(data), xmax=(idx + 1.25) / len(data))
-
-        # Label each point with its custom label
-        for x, y, label in zip(x_values, group, labels):
-            ax.text(x, y, f'{label} ({y:.2f})', color='black', fontsize=8, ha='center')
-
-    ax.set_xticks(range(1, len(category_labels) + 1))
-    ax.set_xticklabels(category_labels)
-    ax.set_title(title)
-    plt.yscale('linear')
-    filename = title.replace(':', '').replace('/', '').strip()
-    plt.savefig(f'{filename}.jpg')
-    plt.clf()
 
 
 def tool_comparison_histogram(statnumber, directory, out_dir):
+    def one_stat_histogramm(labels, values, title):
+        plt.bar(range(len(labels)), values)  # Creating a bar graph
+        plt.title(title)  # Setting the title
+        plt.yscale('linear')
+        filename = title.replace(':', '').replace('/', '').strip()
+        plt.xticks(range(len(labels)), labels)  # Setting x-axis labels
+        plt.xticks(rotation=15)
+        plt.savefig('{}.jpg'.format(filename))  # Saving the plot as an image file
+        plt.clf()
+
     os.chdir(directory)
 
     labels = []
@@ -90,6 +53,20 @@ def tool_comparison_histogram(statnumber, directory, out_dir):
 
 
 def tool_comparison_scatterplot(statnumber1, statnumber2, directory, out_dir):
+    def labeled_scatterplot(x, y, labels, title='Scatter Plot', xlabel='X-axis', ylabel='Y-axis'):
+        fig, ax = plt.subplots()
+        ax.scatter(x, y, marker='o', color='blue', alpha=0.6)  # Directly plotting without assignment
+        # Adding labels to each point
+        for i, label in enumerate(labels):
+            ax.annotate(label, (x[i], y[i]))
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+        ax.set_title(title)
+        plt.grid(True)
+        filename = title.replace(':', '').replace('/', '').strip()
+        plt.savefig('{}.jpg'.format(filename))
+        plt.clf()
+
     os.chdir(directory)
     xlabel = ''
     ylabel = ''
@@ -111,6 +88,30 @@ def tool_comparison_scatterplot(statnumber1, statnumber2, directory, out_dir):
 
 
 def sample_deviation_barplot(statnumber, sample_dir, tool_dir, out_dir):
+    def grouped_absolute_scatterplot_with_individual_bases(data, category_labels, base_values, data_point_labels, title,
+                                                           ax=None):
+        if ax is None:
+            fig, ax = plt.subplots()
+
+        for idx, (group, labels) in enumerate(zip(data, data_point_labels)):
+            x_values = np.random.normal(idx + 1, 0.04, size=len(group))  # Adding jitter for better visibility
+            ax.scatter(x_values, group, label=category_labels[idx])
+
+            # Plot a base value line for the current group
+            ax.axhline(y=base_values[idx], color='black', linestyle='--', linewidth=1, xmin=(idx + 0.75) / len(data),
+                       xmax=(idx + 1.25) / len(data))
+
+            # Label each point with its custom label
+            for x, y, label in zip(x_values, group, labels):
+                ax.text(x, y, f'{label} ({y:.2f})', color='black', fontsize=8, ha='center')
+
+        ax.set_xticks(range(1, len(category_labels) + 1))
+        ax.set_xticklabels(category_labels)
+        ax.set_title(title)
+        plt.yscale('linear')
+        filename = title.replace(':', '').replace('/', '').strip()
+        plt.savefig(f'{filename}.jpg')
+        plt.clf()
     tool_files = os.listdir(tool_dir)
     tool_names = [os.path.splitext(file)[0] for file in tool_files]
     data = []
